@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hangman Game</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f3f3f3;
+        margin: 0;
+        padding: 0;
+    }
+    h1 {
+        color: #333;
+    }
+    p {
+        color: #666;
+    }
+    #word {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+        font-weight: bold;
+    }
+    #guessInput {
+        margin-bottom: 10px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    #message {
+        color: #900;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+    <h1>Hangman Game</h1>
+    <p>Guess the word by entering one letter at a time.</p>
+    <div id="word"></div>
+    <input type="text" id="guessInput" maxlength="1" placeholder="Enter a letter">
+    <button onclick="checkLetter()">Guess</button>
+    <p id="message"></p>
+
+    <script>
+        // List of words for the game
+        const words = ['javascript', 'hangman', 'developer', 'programming', 'computer', 'saikiran'];
+
+        // Select a random word from the list
+        let selectedWord = words[Math.floor(Math.random() * words.length)];
+
+        // Initialize the guessed word
+        let guessedWord = [];
+        for (let i = 0; i < selectedWord.length; i++) {
+            guessedWord.push('_');
+        }
+
+        // Display the initial state of the word
+        const wordDisplay = document.getElementById('word');
+        wordDisplay.textContent = guessedWord.join(' ');
+
+        // Get the input element and message element
+        const guessInput = document.getElementById('guessInput');
+        const message = document.getElementById('message');
+
+        // Track the remaining attempts
+        let remainingAttempts = 6;
+
+        function checkLetter() {
+            // Get the guessed letter
+            const letter = guessInput.value.toLowerCase();
+
+            // Check if the input is a single letter
+            if (letter.length !== 1 || !letter.match(/[a-z]/)) {
+                message.textContent = 'Please enter a single letter from A to Z.';
+                guessInput.value = '';
+                return;
+            }
+
+            // Check if the letter has already been guessed
+            if (guessedWord.includes(letter)) {
+                message.textContent = 'You have already guessed this letter.';
+                guessInput.value = '';
+                return;
+            }
+
+            // Check if the guessed letter is in the word
+            let found = false;
+            for (let i = 0; i < selectedWord.length; i++) {
+                if (selectedWord[i] === letter) {
+                    guessedWord[i] = letter;
+                    found = true;
+                }
+            }
+
+            // Update the display of the guessed word
+            wordDisplay.textContent = guessedWord.join(' ');
+
+            // Check if the player has won
+            if (!guessedWord.includes('_')) {
+                message.textContent = 'Congratulations! You guessed the word correctly.';
+                guessInput.disabled = true;
+                return;
+            }
+
+            // Decrement remaining attempts if letter is not found
+            if (!found) {
+                remainingAttempts--;
+            }
+
+            // Display message for remaining attempts
+            if (remainingAttempts === 0) {
+                message.textContent = `Game over! The word was "${selectedWord}".`;
+                guessInput.disabled = true;
+            } else {
+                message.textContent = `Remaining attempts: ${remainingAttempts}`;
+            }
+
+            // Clear the input field
+            guessInput.value = '';
+        }
+    </script>
+</body>
+</html>
